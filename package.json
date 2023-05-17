@@ -1,0 +1,105 @@
+{
+  "name": "markdown-resume-suite",
+  "displayName": "Markdown Resume Suite",
+  "description": "Write your resume in Markdown, and style it with CSS (we have templates). Export it as a PDF that actually looks good.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.78.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdown-resume-suite.export.pdf",
+        "title": "Markdown Resume Suite: Export Resume | PDF"
+      },
+      {
+        "command": "markdown-resume-suite.generateTemplate",
+        "title": "Markdown Resume Suite: Generate Template"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "Input Options",
+        "properties": {
+          "markdown-resume-suite.inputMarkdownDirectory": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "The path of the directory where your resume's Markdown file lives. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+          },
+          "markdown-resume-suite.inputMarkdownFilename": {
+            "type": "string",
+            "default": "resume.md",
+            "markdownDescription": "The filename of your resume's Markdown file (with the `.md` extension)."
+          },
+          "markdown-resume-suite.inputStyleSheetDirectory": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "The path of the directory where your resume's CSS style sheet lives. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+          },
+          "markdown-resume-suite.inputStyleSheetFilename": {
+            "type": "string",
+            "default": "resume.css",
+            "markdownDescription": "The filename of your resume's CSS style sheet (with the `.css` extension)."
+          }
+        }
+      },
+      {
+        "title": "Output Options",
+        "properties": {
+          "markdown-resume-suite.outputDirectory": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "The path of the directory where you wish your exported resume to be created. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called.",
+            "markdown-resume-suite.outputFilename": {
+              "type": "string",
+              "default": "resume",
+              "markdownDescription": "The filename under which you wish your exported resume to be created (without any given extension)."
+            }
+          }
+        }
+      },
+      {
+        "title": "Template Options",
+        "properties": {
+          "markdown-resume-suite.templateDirectory": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "The path of the directory where resume templates will be created.\n\nTemplates are delivered as folders containing a Markdown file, a CSS style sheet and any other files/folders used to create the final document (e.g., image files). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.78.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.39.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4"
+  },
+  "extensionDependencies": [
+    "yzhang.markdown-all-in-one"
+  ],
+  "dependencies": {
+    "puppeteer": "^20.2.1"
+  }
+}
