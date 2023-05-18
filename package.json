@@ -26,50 +26,45 @@
       {
         "title": "Input Options",
         "properties": {
-          "markdown-resume-suite.inputMarkdownDirectory": {
+          "markdown-resume-suite.inputMarkdownHome": {
             "type": "string",
             "default": "",
-            "markdownDescription": "The path of the directory where your resume's Markdown file lives. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+            "markdownDescription": "The path of the directory where your resume's Markdown file lives (without trailing slash).\n\nIf empty, defaults to the directory of the currently-open file when a relevant command is called."
           },
           "markdown-resume-suite.inputMarkdownFilename": {
             "type": "string",
             "default": "resume.md",
-            "markdownDescription": "The filename of your resume's Markdown file (with the `.md` extension)."
-          },
-          "markdown-resume-suite.inputStyleSheetDirectory": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "The path of the directory where your resume's CSS style sheet lives. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
-          },
-          "markdown-resume-suite.inputStyleSheetFilename": {
-            "type": "string",
-            "default": "resume.css",
-            "markdownDescription": "The filename of your resume's CSS style sheet (with the `.css` extension)."
+            "markdownDescription": "The filename of your resume's Markdown file (with the `.md` extension). \n\n Only applicable if `#markdown-resume-suite.inputMarkdownHome#` is not empty.\n\n If empty, defaults to \"resume.md\"."
           }
         }
       },
       {
         "title": "Output Options",
         "properties": {
-          "markdown-resume-suite.outputDirectory": {
+          "markdown-resume-suite.outputHome": {
             "type": "string",
             "default": "",
-            "markdownDescription": "The path of the directory where you wish your exported resume to be created. \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called.",
-            "markdown-resume-suite.outputFilename": {
-              "type": "string",
-              "default": "resume",
-              "markdownDescription": "The filename under which you wish your exported resume to be created (without any given extension)."
-            }
+            "markdownDescription": "The path of the directory where you wish your exported resume to be created (without trailing slash). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+          },
+          "markdown-resume-suite.outputFilename": {
+            "type": "string",
+            "default": "resume",
+            "markdownDescription": "The filename under which you wish your exported resume to be created (without any given extension). \n\n If empty, defaults to the name of the input Markdown file."
+          },
+          "markdown-resume-suite.outputOverwrite": {
+            "type": "boolean",
+            "default": "true",
+            "markdownDescription": "If true, a newly exported resume will overwrite an existing resume with the same filename."
           }
         }
       },
       {
-        "title": "Template Options",
+        "title": "Generate Template Options",
         "properties": {
-          "markdown-resume-suite.templateDirectory": {
+          "markdown-resume-suite.generateTemplateHome": {
             "type": "string",
             "default": "",
-            "markdownDescription": "The path of the directory where resume templates will be created.\n\nTemplates are delivered as folders containing a Markdown file, a CSS style sheet and any other files/folders used to create the final document (e.g., image files). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+            "markdownDescription": "The path of the directory where resume templates will be created (without trailing slash).\n\nTemplates are delivered as folders containing exactly one Markdown file, as well as any any other files/folders used to create the final document (e.g., a CSS style sheet, image files). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
           }
         }
       }
