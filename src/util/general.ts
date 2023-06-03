@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+
 import LanguageIdentifiers from "../constants/languageIdentifiers";
 
 const isMdDocument = (doc: vscode.TextDocument | undefined): boolean => {

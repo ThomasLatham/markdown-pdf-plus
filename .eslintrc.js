@@ -1,9 +1,18 @@
+// eslint-disable-next-line no-undef
 module.exports = {
+  env: {
+    es6: true,
+  },
   root: true,
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 6,
     sourceType: "module",
+  },
+  settings: {
+    "import/resolver": {
+      typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
+    },
   },
   extends: [
     "eslint:recommended",
@@ -23,11 +32,7 @@ module.exports = {
     "import/order": [
       "error",
       {
-        groups: [
-          ["external", "builtin"],
-          "internal",
-          ["parent", "sibling", "index"],
-        ],
+        groups: [["external", "builtin"], "internal", ["parent", "sibling", "index"]],
         "newlines-between": "always",
       },
     ],
