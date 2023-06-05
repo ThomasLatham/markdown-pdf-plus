@@ -23,19 +23,60 @@ describe("export.html", async function () {
   });
 
   describe("exportHtml", function () {
-    context("when user is using a custom input path and the path is not valid", function () {
-      beforeEach(async function () {
-        await mrsSettings.update("inputMarkdownHome", "some/invalid/path", true);
-      });
+    context("when user is using a custom input path", function () {
+      context("when the path is not valid", function () {
+        beforeEach(async function () {
+          await mrsSettings.update("inputMarkdownHome", "some/invalid/path", true);
+        });
 
-      it("tells the user the path is invalid and aborts", function () {
-        exportHtml().then((result) => {
-          sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.invalidInputMarkdownPath);
-          should(result).not.be.ok();
+        it("tells the user the path is invalid and aborts", function () {
+          exportHtml().then((result) => {
+            sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.invalidInputMarkdownPath);
+            should(result).not.be.ok();
+          });
+        });
+      });
+      context("when the opened file is not Markdown", function () {
+        beforeEach(async function () {
+          await mrsSettings.update("inputMarkdownHome", "./mocks", true);
+          await mrsSettings.update("inputMarkdownFilename", "resume.mock.text", true);
+        });
+
+        it("tells the user the file type is invalid and aborts", function () {
+          exportHtml().then((result) => {
+            sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.invalidInputMarkdownFile);
+            should(result).not.be.ok();
+          });
         });
       });
     });
-
+    context("when the user is not using a custom input path", function () {
+      beforeEach(async function () {
+        await mrsSettings.update("inputMarkdownHome", "", true);
+        await mrsSettings.update("inputMarkdownFilename", "", true);
+        await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+      });
+      context("when there is no open editor", function () {
+        it("tells the user there is no valid Markdown file and aborts", function () {
+          exportHtml().then((result) => {
+            sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.noValidMarkdownFile);
+            should(result).not.be.ok();
+          });
+        });
+      });
+      context("when the open editor is not Markdown", function () {
+        beforeEach(async function () {
+          const inputFile = await vscode.workspace.openTextDocument("./mocks/resume.mock.txt");
+          vscode.window.showTextDocument(inputFile, { preview: false });
+        });
+        it("tells the user there is no valid Markdown file and aborts", function () {
+          exportHtml().then((result) => {
+            sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.noValidMarkdownFile);
+            should(result).not.be.ok();
+          });
+        });
+      });
+    });
     context(
       "when there is no open editor or the file in the currently open editor is not Markdown",
       function () {

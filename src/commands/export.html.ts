@@ -18,29 +18,26 @@ const exportHtml = async (isCalledFromExportResumePdf = false): Promise<boolean>
 
   let doc: vscode.TextDocument;
 
-  if (inputMarkdownHome && inputMarkdownPathIsValid) {
-    vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownPath);
-    return false;
-  }
-
-  if (!inputMarkdownHome) {
+  if (inputMarkdownHome) {
+    if (inputMarkdownPathIsValid) {
+      vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownPath);
+      return false;
+    }
+    const inputFile = await vscode.workspace.openTextDocument(inputMarkdownPath);
+    if (!isMdDocument(inputFile)) {
+      vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownFile);
+      return false;
+    }
+    doc = inputFile;
+    vscode.window.showTextDocument(doc, { preview: false });
+  } else {
     const editor = vscode.window.activeTextEditor;
 
     if (!editor || !isMdDocument(editor?.document)) {
       vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
       return false;
     }
-
     doc = editor.document;
-  } else {
-    const inputFile = await vscode.workspace.openTextDocument(inputMarkdownPath);
-    if (!isMdDocument(inputFile)) {
-      vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownFile);
-      return false;
-    } else {
-      doc = inputFile;
-      vscode.window.showTextDocument(doc, { preview: false });
-    }
   }
 
   if (doc.isDirty || doc.isUntitled) {
