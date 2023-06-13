@@ -12,10 +12,18 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 License: MIT
 
-- `src/test/util/general.ts`
-  [source](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/utils.ts)
-- `src/test/util/memfs.ts`
-  [source](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/memfs.ts)
+- code from
+  [utils.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/utils.ts)
+  used in:
+  - `src/test/util/general.ts`
+- code from
+  [test.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/singlefolder-tests/editor.test.ts)
+  used in:
+  - `src/test/util/general.ts`
+- code from
+  [memfs.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/memfs.ts)
+  used in:
+  - `src/test/util/memfs.ts`
 
 ### [张宇](https://github.com/yzhang-gh)
 
@@ -23,9 +31,11 @@ Copyright (c) 2017 张宇. All rights reserved.
 
 License: MIT
 
-- [vscode-markdown](https://github.com/yzhang-gh/vscode-markdown)
-- `src/utl/general.ts`
-  [source](https://github.com/yzhang-gh/vscode-markdown/blob/master/src/util/generic.ts)
+- [vscode-markdown](https://github.com/yzhang-gh/vscode-markdown) is a dependency of this extension
+- code from
+  [generic.ts](https://github.com/yzhang-gh/vscode-markdown/blob/master/src/util/generic.ts) used
+  in:
+  - `src/utl/general.ts`
 
 ## License Text
 

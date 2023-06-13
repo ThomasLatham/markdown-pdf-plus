@@ -1,4 +1,5 @@
 {
+  "publisher": "tom-latham",
   "name": "markdown-resume-suite",
   "displayName": "Markdown Resume Suite",
   "description": "Write your resume in Markdown, and style it with CSS (we have templates). Export it as a PDF that actually looks good.",

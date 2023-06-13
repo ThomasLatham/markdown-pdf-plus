@@ -14,12 +14,12 @@ const meta = JSON.parse(manifest);
  *
  * </br>
  *
- * - There is a file in the `src/commands` directory named "command-name"
+ * - There is a file in the `src/commands` directory named "command-name.ts"
  * 	whose default export is the desired callback
  * 	to be used for that command's `vscode.commands.registerCommand()`.
  *
  */
-const activate = (context: vscode.ExtensionContext) => {
+const activate = async (context: vscode.ExtensionContext): Promise<vscode.ExtensionContext> => {
   // Loop through the commands in the manifest.
   context.subscriptions.push(
     ...meta.contributes.commands.map(async (commandObj: { command: string; title: string }) => {
@@ -31,6 +31,7 @@ const activate = (context: vscode.ExtensionContext) => {
       return vscode.commands.registerCommand(commandObj.command, commandFunction.default);
     })
   );
+  return context;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

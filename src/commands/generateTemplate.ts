@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 const generateTemplate = () => {
-  vscode.window.showInformationMessage("In generate-basic!");
+  vscode.window.showWarningMessage("This functionality is still in construction. Sorry!");
 };
 
 export default generateTemplate;
