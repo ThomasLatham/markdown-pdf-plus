@@ -12,7 +12,7 @@ import { cloneExtensionSettings, withRandomFileEditor } from "./util/general";
 import { getAbsolutePath } from "../util/general";
 
 describe("export.html", async function () {
-  const mrsSettings = vscode.workspace.getConfiguration("markdown-resume-suite");
+  const mrsSettings = vscode.workspace.getConfiguration("markdown-pdf-plus");
   const sandbox = sinon.createSandbox();
   let preTestSettings: SettingObject[];
 
@@ -24,7 +24,7 @@ describe("export.html", async function () {
 
   this.beforeAll(async function () {
     // save the current global settings for the extension because we're about to change them
-    const extension = extensions.getExtension("tom-latham.markdown-resume-suite");
+    const extension = extensions.getExtension("tom-latham.markdown-pdf-plus");
 
     extensionContext = await extension?.activate();
     preTestSettings = cloneExtensionSettings(extension as Extension<any>, mrsSettings);

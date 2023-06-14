@@ -5,13 +5,13 @@ import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
 
 import UIMessages from "../constants/uiMessages";
-import exportResumeHtml from "./export.html";
+import exportHtml from "./export.html";
 import StylesheetInfo from "../interfaces/stylesheetInfo";
 
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
-    vscode.workspace.getConfiguration("markdown-resume-suite");
-  const inputHtmlFilename = await exportResumeHtml(true);
+    vscode.workspace.getConfiguration("markdown-pdf-plus");
+  const inputHtmlFilename = await exportHtml(true);
 
   if (inputHtmlFilename) {
     let inputHtmlHome = config.get("inputMarkdownHome", "");
@@ -41,7 +41,7 @@ const exportPdf = async (): Promise<boolean> => {
         outputPdfHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
       }
     }
-    const outputPdfFilename = `${config.get("outputFilename", "resume")}.pdf`;
+    const outputPdfFilename = `${config.get("outputFilename", "") || "output"}.pdf`;
 
     const outputPdfPath = path.join(outputPdfHome, outputPdfFilename);
 

@@ -1,7 +1,7 @@
-# markdown-resume-suite README
+# markdown-pdf-plus README
 
-This is the README for your extension "markdown-resume-suite". After writing up a brief description,
-we recommend including the following sections.
+This is the README for your extension "markdown-pdf-plus". After writing up a brief description, we
+recommend including the following sections.
 
 ## Features
 

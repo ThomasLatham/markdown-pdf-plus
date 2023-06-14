@@ -10,17 +10,17 @@ import { checkFileExists } from "../test/util/general";
 /**
  * Exports the current Markdown document (whether by current editor or configured path) to HTML.
  *
- * @param isCalledFromExportPdf True if the function was called from `exportResumePdf()`
+ * @param isCalledFromExportPdf True if the function was called from `exportPdf()`
  *  in`src/commands/export.pdf.ts`.
  * @returns If successful, the name of the created file. Otherwise, the empty string.
  */
 const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
   const config: vscode.WorkspaceConfiguration =
-    vscode.workspace.getConfiguration("markdown-resume-suite");
+    vscode.workspace.getConfiguration("markdown-pdf-plus");
 
   // Get the input file
   const inputMarkdownHome = config.get("inputMarkdownHome", "");
-  const inputMarkdownFilename = config.get("inputMarkdownFilename", "resume.md");
+  const inputMarkdownFilename = config.get("inputMarkdownFilename", "");
 
   const inputMarkdownPath = path.join(inputMarkdownHome, inputMarkdownFilename);
   const inputMarkdownPathIsValid = fs.existsSync(inputMarkdownPath);
@@ -78,10 +78,9 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
   // and move it if not calling from export PDF and user wants
   const outputFilename = isCalledFromExportPdf
     ? crypto.randomBytes(20).toString("hex")
-    : config.get("outputFilename", "") || path.parse(doc.fileName).name;
+    : config.get("outputFilename", "") || "output";
   const outputHome = config.get("outputHome", "");
 
-  console.log(config.get("outputFilename", path.parse(doc.fileName).name));
   if (outputFilename !== path.parse(doc.fileName).name || (outputHome && !isCalledFromExportPdf)) {
     let renameDirectory: string;
     if (outputHome && !isCalledFromExportPdf) {

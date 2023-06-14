@@ -95,7 +95,7 @@ const cloneExtensionSettings = (
     (settingName) => {
       return {
         settingName: settingName,
-        settingValue: config.inspect(settingName.split("markdown-resume-suite.")[1])
+        settingValue: config.inspect(settingName.split("markdown-pdf-plus.")[1])
           ?.globalValue as string,
       };
     }
