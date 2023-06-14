@@ -119,7 +119,7 @@ const extractStylesheetsFromHtml = (
   $('link[rel="stylesheet"]').each((_, element) => {
     const href = $(element).attr("href");
     if (href) {
-      const isExternal = isExternalStylesheet(href);
+      const isExternal = isExternalReference(href);
       const stylesheetPath = isExternal ? href : path.resolve(path.dirname(htmlFilePath), href);
       stylesheets.push({ path: stylesheetPath, isExternal });
     }
@@ -128,16 +128,12 @@ const extractStylesheetsFromHtml = (
   return stylesheets;
 };
 
-const isExternalStylesheet = (href: string): boolean => {
-  return /^(https?:)?\/\//i.test(href);
-};
-
 const replaceLocalImgSrcWithBase64 = (htmlContent: string): string => {
   const $ = load(htmlContent);
 
   $("img[src]").each((_, element) => {
     const src = $(element).attr("src");
-    if (src && !isExternalImage(src)) {
+    if (src && !isExternalReference(src)) {
       const imagePath = path.resolve(src.replace("file:///", ""));
       const imageContent = fs.readFileSync(imagePath).toString("base64");
       const mimeType = getImageMimeType(imagePath);
@@ -147,10 +143,6 @@ const replaceLocalImgSrcWithBase64 = (htmlContent: string): string => {
   });
 
   return $.html();
-};
-
-const isExternalImage = (src: string): boolean => {
-  return /^(https?:)?\/\//i.test(src);
 };
 
 const getImageMimeType = (imagePath: string): string => {
@@ -168,6 +160,10 @@ const getImageMimeType = (imagePath: string): string => {
     default:
       return "image/jpeg"; // Default to JPEG if the extension is unknown
   }
+};
+
+const isExternalReference = (reference: string): boolean => {
+  return /^(https?:)?\/\//i.test(reference);
 };
 
 export default exportPdf;
