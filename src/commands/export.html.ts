@@ -12,42 +12,21 @@ import { checkFileExists } from "../test/util/general";
  *
  * @param isCalledFromExportPdf True if the function was called from `exportPdf()`
  *  in`src/commands/export.pdf.ts`.
- * @returns If successful, the name of the created file. Otherwise, the empty string.
+ * @returns A 2-element `string` array. If unsuccessful, both strings will be the empty string.
+ *  If successful, the first string will be the name of the original input file, and second string
+ *  will be the name of the created HTML file.
  */
-const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
+const exportHtml = async (isCalledFromExportPdf = false): Promise<[string, string]> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
 
-  // Get the input file
-  const inputMarkdownHome = config.get("inputMarkdownHome", "");
-  const inputMarkdownFilename = config.get("inputMarkdownFilename", "");
+  const editor = vscode.window.activeTextEditor;
 
-  const inputMarkdownPath = path.join(inputMarkdownHome, inputMarkdownFilename);
-  const inputMarkdownPathIsValid = fs.existsSync(inputMarkdownPath);
-
-  let doc: vscode.TextDocument;
-
-  if (inputMarkdownHome) {
-    if (!inputMarkdownPathIsValid) {
-      vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownPath);
-      return "";
-    }
-    const inputFile = await vscode.workspace.openTextDocument(inputMarkdownPath);
-    if (!isMdDocument(inputFile)) {
-      vscode.window.showErrorMessage(UIMessages.invalidInputMarkdownFile);
-      return "";
-    }
-    doc = inputFile;
-    vscode.window.showTextDocument(doc, { preview: false });
-  } else {
-    const editor = vscode.window.activeTextEditor;
-
-    if (!editor || !isMdDocument(editor?.document)) {
-      vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
-      return "";
-    }
-    doc = editor.document;
+  if (!editor || !isMdDocument(editor?.document)) {
+    vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
+    return ["", ""];
   }
+  const doc: vscode.TextDocument = editor.document;
 
   if (doc.isDirty || doc.isUntitled) {
     doc.save();
@@ -55,7 +34,7 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
 
   if (!(await printToHtml())) {
     vscode.window.showErrorMessage(UIMessages.exportToHtmlFailed);
-    return "";
+    return ["", ""];
   } else {
     if (!isCalledFromExportPdf) {
       vscode.window.showInformationMessage(UIMessages.exportToHtmlSucceeded);
@@ -67,18 +46,14 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
     isCalledFromExportPdf
   ) {
     vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
-    return "";
-  }
-  // Close the text editor if we opened it
-  if (inputMarkdownHome && inputMarkdownPathIsValid) {
-    vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+    return ["", ""];
   }
 
   // Rename the file if user wants or if calling from export PDF,
   // and move it if not calling from export PDF and user wants
   const outputFilename = isCalledFromExportPdf
     ? crypto.randomBytes(20).toString("hex")
-    : config.get("outputFilename", "") || "output";
+    : config.get("outputFilename", "") || path.parse(doc.fileName).name;
   const outputHome = config.get("outputHome", "");
 
   if (outputFilename !== path.parse(doc.fileName).name || (outputHome && !isCalledFromExportPdf)) {
@@ -106,10 +81,10 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<string> => {
         });
       }
       vscode.window.showErrorMessage(UIMessages.renamingOrMovingHtmlFailed);
-      return "";
+      return ["", ""];
     }
   }
-  return `${outputFilename}.html`;
+  return [path.parse(doc.fileName).name, `${outputFilename}.html`];
 };
 
 const printToHtml = async (): Promise<boolean> => {

@@ -17,7 +17,6 @@ describe("export.html", async function () {
   let preTestSettings: SettingObject[];
 
   let showErrorMessageSpy: SinonSpy;
-  let showInformationMessageSpy: SinonSpy;
   let showTextDocumentSpy: SinonSpy;
 
   let extensionContext: ExtensionContext;
@@ -32,7 +31,6 @@ describe("export.html", async function () {
 
   beforeEach(function () {
     showErrorMessageSpy = sandbox.spy(vscode.window, "showErrorMessage");
-    showInformationMessageSpy = sandbox.spy(vscode.window, "showInformationMessage");
     showTextDocumentSpy = sandbox.spy(vscode.window, "showTextDocument");
   });
 
@@ -57,7 +55,7 @@ describe("export.html", async function () {
         it("tells the user the path is invalid and aborts", async function () {
           const result = await exportHtml();
           sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.invalidInputMarkdownPath);
-          should(result).not.be.ok();
+          should(result).deepEqual(["", ""]);
         });
       });
       context("when the opened file is not Markdown", function () {
@@ -73,7 +71,7 @@ describe("export.html", async function () {
         it("tells the user the file type is invalid and aborts", async function () {
           const result = await exportHtml();
           sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.invalidInputMarkdownFile);
-          should(result).not.be.ok();
+          should(result).deepEqual(["", ""]);
         });
       });
       context("when the opened file is Markdown", function () {
@@ -104,7 +102,7 @@ describe("export.html", async function () {
         it("tells the user there is no valid Markdown file and aborts", async function () {
           const result = await exportHtml();
           sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.noValidMarkdownFile);
-          should(result).not.be.ok();
+          should(result).deepEqual(["", ""]);
         });
       });
       context("when the open editor is not Markdown", function () {
@@ -115,7 +113,7 @@ describe("export.html", async function () {
               await editor.insertSnippet(new SnippetString());
               const result = await exportHtml();
               sandbox.assert.calledWith(showErrorMessageSpy, UIMessages.noValidMarkdownFile);
-              should(result).not.be.ok();
+              should(result).deepEqual(["", ""]);
             },
             ".txt"
           );

@@ -23,38 +23,21 @@
         "title": "Markdown PDF Plus: Export HTML"
       }
     ],
-    "configuration": [
-      {
-        "title": "Input Options",
-        "properties": {
-          "markdown-pdf-plus.inputMarkdownHome": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "The path of the directory where your Markdown file lives (without trailing slash).\n\nIf empty, defaults to the directory of the currently-open file when a relevant command is called."
-          },
-          "markdown-pdf-plus.inputMarkdownFilename": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "The name of your Markdown file (with the `.md` extension). \n\n Only applicable if `#markdown-pdf-plus.inputMarkdownHome#` is not empty.\n\n If empty, defaults to \"input.md\"."
-          }
-        }
-      },
-      {
-        "title": "Output Options",
-        "properties": {
-          "markdown-pdf-plus.outputHome": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "The path of the directory where you wish your exported file to be created (without trailing slash). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
-          },
-          "markdown-pdf-plus.outputFilename": {
-            "type": "string",
-            "default": "",
-            "markdownDescription": "The filename under which you wish your exported file to be created (without any given extension). \n\n If empty, defaults to \"output.ext\" (.pdf or .html)."
-          }
+    "configuration": {
+      "title": "Markdown PDF Plus",
+      "properties": {
+        "markdown-pdf-plus.outputHome": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The path of the directory where you wish your exported file to be created (without trailing slash). \n\n If empty, defaults to the directory of the currently-open file when a relevant command is called."
+        },
+        "markdown-pdf-plus.outputFilename": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The filename under which you wish your exported file to be created (without any given extension). \n\n If empty, defaults to the name of your input file."
         }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",

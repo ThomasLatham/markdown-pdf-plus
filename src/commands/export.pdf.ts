@@ -7,14 +7,23 @@ import { load } from "cheerio";
 import UIMessages from "../constants/uiMessages";
 import exportHtml from "./export.html";
 import StylesheetInfo from "../interfaces/stylesheetInfo";
+import { isMdDocument } from "../util/general";
 
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
-  const inputHtmlFilename = await exportHtml(true);
+  const [inputMarkdownFilename, inputHtmlFilename] = await exportHtml(true);
 
   if (inputHtmlFilename) {
-    let inputHtmlHome = config.get("inputMarkdownHome", "");
+    const editor = vscode.window.activeTextEditor;
+
+    if (!editor || !isMdDocument(editor?.document)) {
+      vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
+      return false;
+    }
+    const doc: vscode.TextDocument = editor.document;
+
+    let inputHtmlHome = path.parse(doc.fileName).dir;
     if (!inputHtmlHome) {
       if (!vscode.window.activeTextEditor) {
         fs.unlink(inputHtmlFilename, () => {
@@ -41,7 +50,7 @@ const exportPdf = async (): Promise<boolean> => {
         outputPdfHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
       }
     }
-    const outputPdfFilename = `${config.get("outputFilename", "") || "output"}.pdf`;
+    const outputPdfFilename = `${config.get("outputFilename", "") || inputMarkdownFilename}.pdf`;
 
     const outputPdfPath = path.join(outputPdfHome, outputPdfFilename);
 
