@@ -92,5 +92,10 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
-  "icon": "./public/icon.png"
+  "icon": "./public/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThomasLatham/markdown-pdf-plus"
+  },
+  "homepage": "https://github.com/ThomasLatham/markdown-pdf-plus/blob/main/README.md"
 }
