@@ -58,8 +58,8 @@
   },
   "activationEvents": [],
   "dependencies": {
-    "puppeteer": "^20.2.1",
-    "cheerio": "^1.0.0-rc.12"
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^20.2.1"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
