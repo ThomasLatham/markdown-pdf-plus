@@ -58,8 +58,7 @@
   },
   "activationEvents": [],
   "dependencies": {
-    "puppeteer": "^20.2.1",
-    "vscode": "^1.1.37"
+    "puppeteer": "^20.2.1"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -79,7 +78,8 @@
     "prettier": "^2.8.8",
     "should": "^13.2.3",
     "sinon": "^15.1.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vscode": "^1.1.37"
   },
   "extensionDependencies": [
     "yzhang.markdown-all-in-one"
