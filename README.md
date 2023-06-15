@@ -1,40 +1,57 @@
-# markdown-pdf-plus README
+# Markdown PDF Plus
 
-This is the README for your extension "markdown-pdf-plus". After writing up a brief description, we
-recommend including the following sections.
+Export Markdown as PDF or HTML. Customize the output with CSS and images!
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action.
-Image paths are relative to this README file.
+### Export PDF
 
-For example if there is an image subfolder under your extension project workspace:
+Export a Markdown file to PDF:
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open the Markdown file in a VS Code editor.
+2. Open the Command Palette with `Ctrl+Shift+P`.
+3. Search for "Markdown PDF Plus: Export PDF" and select that option.
+4. Wait for the PDF to generate (5-10 seconds).
+5. Enjoy the finished product!
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your
-> extension! We recommend short, focused animations that are easy to follow.
+Demo:
 
-## Requirements
+![Export PDF](public/recording_export_pdf.gif)
 
-If you have any requirements or dependencies, add a section describing those and how to install and
-configure them.
+### Export HTML
+
+1. Open the Markdown file in a VS Code editor.
+2. Open the Command Palette with `Ctrl+Shift+P`.
+3. Search for "Markdown PDF Plus: Export HTML" and select that option.
+4. Wait for the HTML file to generate (1-2 seconds).
+5. Enjoy the finished product!
+
+Demo: See the demo for Export PDF —— it's the same flow.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration`
-extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
+- `markdown-pdf-plus.outputHome`: The path of the directory where you wish your exported file to be
+  created (without trailing slash). If empty, defaults to the directory of the currently-open file
+  when a relevant command is called.
+- `markdown-pdf-plus.outputFilename`: The filename under which you wish your exported file to be
+  created (without any given extension). If empty, defaults to the name of your input file.
+- `markdown-pdf-plus.usePageStyleFromCSS`: Give any
+  [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule declared in CSS priority
+  over the extension's default page settings.
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### Exporting PDF overwrites HTML
+
+1. Export a Markdown file (`my_file.md`, for example) to HTML resulting in `my_file.html`.
+2. Make some changes to the Markdown file and save them.
+3. Export the same Markdown file to PDF, resulting in `my_file.pdf`.
+
+Expected result: The changes made in step 2. should not be reflected in `my_file.html`.
+
+Actual result: The changes made in step 2. are reflected in `my_file.html`.
 
 ## Release Notes
 
@@ -42,41 +59,9 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
+Initial release of Markdown PDF Plus.
 
 ## Third-Party Software
 
 This product includes software developed by third-party sources. Please see the Third-Party Software
 section of LICENSE in the root directory for details.
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating
-your extension.
-
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**

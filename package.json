@@ -3,7 +3,8 @@
   "name": "markdown-pdf-plus",
   "displayName": "Markdown PDF Plus",
   "description": "Export Markdown as PDF or HTML. You can include stylesheets and images, both local and remote.",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "vscode": "^1.78.0"
   },
