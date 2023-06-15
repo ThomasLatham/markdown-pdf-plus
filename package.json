@@ -1,6 +1,6 @@
 {
   "name": "markdown-pdf-plus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "tom-latham",
   "engines": {
     "vscode": "^1.78.0"
