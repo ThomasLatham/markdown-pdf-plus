@@ -21,7 +21,7 @@
   ],
   "galleryBanner": {
     "color": "Whitesmoke",
-    "theme": "dark"
+    "theme": "light"
   },
   "main": "./out/extension.js",
   "contributes": {
