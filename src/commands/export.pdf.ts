@@ -77,7 +77,7 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     const config: vscode.WorkspaceConfiguration =
       vscode.workspace.getConfiguration("markdown-pdf-plus");
 
-    const preferCSSPageSize: boolean = config.get("preferCSSPageSize", false);
+    const preferCSSPageSize: boolean = config.get("usePageStyleFromCSS", false);
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
