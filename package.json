@@ -35,6 +35,11 @@
           "type": "string",
           "default": "",
           "markdownDescription": "The filename under which you wish your exported file to be created (without any given extension). \n\n If empty, defaults to the name of your input file."
+        },
+        "markdown-pdf-plus.preferCSSPageSize": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Give any CSS @page size declared in the page priority over the extension's default settings."
         }
       }
     }

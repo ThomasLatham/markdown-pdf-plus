@@ -74,6 +74,11 @@ const exportPdf = async (): Promise<boolean> => {
 
 const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Promise<boolean> => {
   try {
+    const config: vscode.WorkspaceConfiguration =
+      vscode.workspace.getConfiguration("markdown-pdf-plus");
+
+    const preferCSSPageSize: boolean = config.get("preferCSSPageSize", false);
+
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -90,9 +95,10 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     await page.pdf({
       path: pdfFilePath,
       format: "A4",
-      margin: { top: "50px", right: "50px", bottom: "50px", left: "50px" },
+      margin: { top: "96px", right: "96px", bottom: "96px", left: "96px" },
       printBackground: true,
       displayHeaderFooter: false,
+      preferCSSPageSize: preferCSSPageSize,
     });
 
     await browser.close();
