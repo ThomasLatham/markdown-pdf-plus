@@ -26,7 +26,8 @@ Demo:
 4. Wait for the HTML file to generate (1-2 seconds).
 5. Enjoy the finished product!
 
-Demo: See the demo for Export PDF —— it's the same flow.
+Demo: See the demo for Export PDF —— it's the same flow, except with the HTML command rather than
+the PDF one.
 
 ## Extension Settings
 
@@ -54,8 +55,6 @@ Expected result: The changes made in step 2. should not be reflected in `my_file
 Actual result: The changes made in step 2. are reflected in `my_file.html`.
 
 ## Release Notes
-
-Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 

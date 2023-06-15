@@ -1,17 +1,28 @@
 {
-  "publisher": "tom-latham",
   "name": "markdown-pdf-plus",
-  "displayName": "Markdown PDF Plus",
-  "description": "Export Markdown as PDF or HTML. You can include stylesheets and images, both local and remote.",
   "version": "1.0.0",
-  "license": "SEE LICENSE IN LICENSE",
+  "publisher": "tom-latham",
   "engines": {
     "vscode": "^1.78.0"
   },
+  "license": "SEE LICENSE IN LICENSE",
+  "displayName": "Markdown PDF Plus",
+  "description": "Export Markdown as PDF or HTML. You can include stylesheets and images, both local and remote.",
   "categories": [
-    "Other"
+    "Other",
+    "Programming Languages"
   ],
-  "activationEvents": [],
+  "keywords": [
+    "Markdown",
+    "PDF",
+    "Export",
+    "HTML",
+    "CSS"
+  ],
+  "galleryBanner": {
+    "color": "Whitesmoke",
+    "theme": "dark"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -45,13 +56,10 @@
       }
     }
   },
-  "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "yarn run compile && yarn run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+  "activationEvents": [],
+  "dependencies": {
+    "puppeteer": "^20.2.1",
+    "vscode": "^1.1.37"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -76,8 +84,13 @@
   "extensionDependencies": [
     "yzhang.markdown-all-in-one"
   ],
-  "dependencies": {
-    "puppeteer": "^20.2.1",
-    "vscode": "^1.1.37"
-  }
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "icon": "./public/icon.png"
 }
