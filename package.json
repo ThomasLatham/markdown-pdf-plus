@@ -3,7 +3,7 @@
   "version": "1.0.4",
   "publisher": "tom-latham",
   "engines": {
-    "vscode": "^1.78.0"
+    "vscode": "^1.76.0"
   },
   "license": "SEE LICENSE IN LICENSE.md",
   "displayName": "Markdown PDF Plus",
