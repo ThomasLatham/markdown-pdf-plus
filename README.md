@@ -56,9 +56,7 @@ Actual result: The changes made in step 2. are reflected in `my_file.html`.
 
 ## Release Notes
 
-### 1.0.0
-
-Initial release of Markdown PDF Plus.
+See the [changelog](CHANGELOG.md).
 
 ## Third-Party Software
 
