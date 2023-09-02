@@ -9,6 +9,8 @@ import exportHtml from "./export.html";
 import StylesheetInfo from "../interfaces/stylesheetInfo";
 import { isMdDocument } from "../util/general";
 
+let conditionalUIMessage = "";
+
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
@@ -58,7 +60,8 @@ const exportPdf = async (): Promise<boolean> => {
       fs.unlink(inputHtmlPath, () => {
         console.log("Temporary HTML file deleted.");
       });
-      vscode.window.showInformationMessage(UIMessages.exportToPdfSucceeded);
+
+      vscode.window.showInformationMessage(conditionalUIMessage);
       return true;
     } else {
       fs.unlink(inputHtmlPath, () => {
@@ -115,7 +118,12 @@ const addExternalStylesheetsToPage = async (htmlFilePath: string, page: Page): P
 
   for (const stylesheet of stylesheets) {
     if (stylesheet.isExternal) {
-      await page.addStyleTag({ url: stylesheet.path });
+      try {
+        await page.addStyleTag({ url: stylesheet.path });
+        conditionalUIMessage = UIMessages.exportToPdfSucceeded;
+      } catch (error) {
+        conditionalUIMessage = UIMessages.exportToPdfSucceededExternalCssFailed;
+      }
     } else {
       const stylesheetContent = await fs.promises.readFile(stylesheet.path, "utf8");
       await page.addStyleTag({ content: stylesheetContent });
