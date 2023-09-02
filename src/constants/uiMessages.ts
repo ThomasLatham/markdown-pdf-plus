@@ -12,6 +12,7 @@ const enum UIMessages {
   renamingOrMovingHtmlFailed = "Exported HTML could not be renamed and/or moved.",
   exportToPdfFailed = "Exporting file to PDF failed.",
   exportToPdfSucceeded = "File successfully exported to PDF.",
+  exportToPdfSucceededExternalCssFailed = "File successfully exported to PDF, but one or more external stylesheets could not be retrieved.",
 }
 
 export default UIMessages;
