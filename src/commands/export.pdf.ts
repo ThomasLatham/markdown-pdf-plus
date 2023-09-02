@@ -116,11 +116,11 @@ const addExternalStylesheetsToPage = async (htmlFilePath: string, page: Page): P
   const fileContent = await fs.promises.readFile(htmlFilePath, "utf8");
   const stylesheets = extractStylesheetsFromHtml(fileContent, htmlFilePath);
 
+  conditionalUIMessage = UIMessages.exportToPdfSucceeded;
   for (const stylesheet of stylesheets) {
     if (stylesheet.isExternal) {
       try {
         await page.addStyleTag({ url: stylesheet.path });
-        conditionalUIMessage = UIMessages.exportToPdfSucceeded;
       } catch (error) {
         conditionalUIMessage = UIMessages.exportToPdfSucceededExternalCssFailed;
       }
