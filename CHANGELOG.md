@@ -12,6 +12,14 @@ All notable changes to the "markdown-pdf-plus" extension will be documented in t
 
 ## [1.0.8]
 
-- [Fixed bug](https://github.com/ThomasLatham/markdown-pdf-plus/pull/3) causing `Markdown PDF Plus: Export PDF` to fail in the absence of an internet connection.
+- [Fixed bug](https://github.com/ThomasLatham/markdown-pdf-plus/pull/3) causing `Markdown PDF Plus:
+  Export PDF` to fail in the absence of an internet connection.
 - Minimum VS Code version set to 1.75.0.
+
+## [1.1.0]
+
+- Using [Puppeteer Chromium Resolver](https://github.com/cenfun/puppeteer-chromium-resolver) to
+  resolve Chromium for `puppeteer.launch()`, in case user doesn't have
+  `C://Users/<user>/.cache/puppeteer` directory.
+- Updated the extension's icon for better visibility in the Marketplace and in the IDE.
 
