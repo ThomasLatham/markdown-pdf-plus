@@ -59,7 +59,8 @@
   "activationEvents": [],
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "puppeteer": "^20.2.1"
+    "puppeteer": "^20.2.1",
+    "puppeteer-chromium-resolver": "^20.0.0"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
