@@ -3,6 +3,7 @@ import * as fs from "fs";
 import path = require("path");
 import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
+import PCR from "puppeteer-chromium-resolver";
 
 import UIMessages from "../constants/uiMessages";
 import exportHtml from "./export.html";
@@ -81,8 +82,12 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
       vscode.workspace.getConfiguration("markdown-pdf-plus");
 
     const preferCSSPageSize: boolean = config.get("usePageStyleFromCSS", false);
+    const stats = await PCR({});
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox"],
+      executablePath: stats.executablePath,
+    });
     const page = await browser.newPage();
 
     // Emulate screen media type to remove default header and footer
