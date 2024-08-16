@@ -23,3 +23,7 @@ All notable changes to the "markdown-pdf-plus" extension will be documented in t
   `C://Users/<user>/.cache/puppeteer` directory.
 - Updated the extension's icon for better visibility in the Marketplace and in the IDE.
 
+## [1.2.0]
+
+- [Mermaid](https://mermaid.js.org/) is supported.
+- Updated the README to include page-customization details.

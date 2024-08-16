@@ -29,6 +29,21 @@ Demo:
 Demo: See the demo for Export PDF —— it's the same flow, except with the HTML command rather than
 the PDF one.
 
+### Page Customization (Margins, Page Breaks, Etc.)
+
+Page properties of exported PDFs (e.g., margins, page size) can be customized via creating CSS that
+includes an
+[@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule and inserting that CSS into
+the PDF's source Markdown file. For a more detailed example please see [this
+answer](https://github.com/ThomasLatham/markdown-pdf-plus/issues/5#issuecomment-2180816708) to a related
+issue on this project's GitHub.
+
+Page breaks can be rendered in exported PDFs by inserting `<div
+style="page-break-before:always"></div>` into the source Markdown file wherever a page break is
+desired. For reference please see [this
+answer](https://github.com/ThomasLatham/markdown-pdf-plus/issues/6#issuecomment-2111540362) to a
+related issue on this project's GitHub.
+
 ## Extension Settings
 
 This extension contributes the following settings:
