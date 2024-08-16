@@ -35,10 +35,6 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<[string, strin
   if (!(await printToHtml())) {
     vscode.window.showErrorMessage(UIMessages.exportToHtmlFailed);
     return ["", ""];
-  } else {
-    if (!isCalledFromExportPdf) {
-      vscode.window.showInformationMessage(UIMessages.exportToHtmlSucceeded);
-    }
   }
 
   if (
@@ -47,6 +43,43 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<[string, strin
   ) {
     vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
     return ["", ""];
+  }
+
+  try {
+    // Read the generated HTML file
+    const htmlFilePath = convertFileExtension(doc.fileName, ".md", ".html");
+    let htmlContent = fs.readFileSync(htmlFilePath, "utf-8");
+
+    // Modify the HTML content to render Mermaid diagrams as SVGs
+    const mermaidScript = `
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>`;
+
+    // Insert the Mermaid script after the first instance of </style>
+    const styleIndex = htmlContent.indexOf("</style>");
+    if (styleIndex !== -1) {
+      htmlContent =
+        htmlContent.slice(0, styleIndex + 8) + mermaidScript + htmlContent.slice(styleIndex + 8);
+    } else {
+      // If no </style> tag is found, append the script at the end of the HTML
+      htmlContent += mermaidScript;
+    }
+
+    // convert mermaid blocks
+    htmlContent = convertMermaidBlocks(htmlContent);
+
+    // Write the modified HTML content back to the file
+    fs.writeFileSync(htmlFilePath, htmlContent);
+  } catch (error) {
+    vscode.window.showErrorMessage(UIMessages.exportToHtmlFailed);
+    console.error("Error modifying HTML content:", error);
+    return ["", ""];
+  }
+
+  if (!isCalledFromExportPdf) {
+    vscode.window.showInformationMessage(UIMessages.exportToHtmlSucceeded);
   }
 
   // Rename the file if user wants or if calling from export PDF,
@@ -119,6 +152,15 @@ const printToHtml = async (): Promise<boolean> => {
       }
     );
   }
+};
+
+const convertMermaidBlocks = (html: string): string => {
+  return html.replace(
+    /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+    (match, p1) => {
+      return `<pre class="mermaid">${p1}</pre>`;
+    }
+  );
 };
 
 export default exportHtml;
