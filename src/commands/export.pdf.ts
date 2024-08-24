@@ -4,6 +4,8 @@ import path = require("path");
 import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
 import PCR from "puppeteer-chromium-resolver";
+import os from "os";
+import crypto = require("crypto");
 
 import UIMessages from "../constants/uiMessages";
 import exportHtml from "./export.html";
@@ -77,6 +79,9 @@ const exportPdf = async (): Promise<boolean> => {
 };
 
 const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Promise<boolean> => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "markdown-pdf-plus-"));
+  const tempHtmlFilePath = path.join(tempDir, `${crypto.randomBytes(20).toString("hex")}.html`);
+
   try {
     const config: vscode.WorkspaceConfiguration =
       vscode.workspace.getConfiguration("markdown-pdf-plus");
@@ -93,12 +98,22 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     // Emulate screen media type to remove default header and footer
     await page.emulateMediaType("screen");
 
-    // Set content of the page to the HTML file
-    const htmlContent = replaceLocalImgSrcWithBase64(
-      await fs.promises.readFile(htmlFilePath, "utf8")
+    // Replace local images with base64
+    const htmlContent = replaceSpecialCharacters(
+      await replaceLocalBackgroundImagesWithBase64InMemory(
+        replaceLocalImgSrcWithBase64(await fs.promises.readFile(htmlFilePath, "utf8")),
+        htmlFilePath
+      )
     );
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    // Write the modified HTML content to a temporary file
+
+    fs.writeFileSync(tempHtmlFilePath, htmlContent, "utf8");
+
+    // Set content of the page to the temporary HTML file
+    await page.goto(`file://${tempHtmlFilePath}`, { waitUntil: "networkidle0" });
     await addExternalStylesheetsToPage(htmlFilePath, page);
+
     // Generate PDF without the header and footer
     await page.pdf({
       path: pdfFilePath,
@@ -114,6 +129,15 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
   } catch (error) {
     console.error("Error converting HTML to PDF:", error);
     return false; // Conversion failed
+  } finally {
+    if (fs.existsSync(tempHtmlFilePath)) {
+      fs.unlinkSync(tempHtmlFilePath);
+      console.log("Temporary HTML file deleted.");
+    }
+    if (fs.existsSync(tempDir)) {
+      fs.rmdirSync(tempDir);
+      console.log("Temporary directory deleted.");
+    }
   }
 };
 
@@ -173,6 +197,43 @@ const replaceLocalImgSrcWithBase64 = (htmlContent: string): string => {
   return $.html();
 };
 
+const replaceLocalBackgroundImagesWithBase64InMemory = async (
+  htmlContent: string,
+  htmlFilePath: string
+): Promise<string> => {
+  const $ = load(htmlContent);
+
+  // Process each linked CSS file
+  const stylesheets = extractStylesheetsFromHtml(htmlContent, htmlFilePath);
+  for (const stylesheet of stylesheets) {
+    if (!stylesheet.isExternal) {
+      const cssContent = await fs.promises.readFile(stylesheet.path, "utf8");
+      const updatedCssContent = await replaceLocalUrlsWithBase64(
+        cssContent,
+        path.dirname(stylesheet.path)
+      );
+
+      // Inject the modified CSS content into the HTML
+      $("head").append(`<style>${updatedCssContent}</style>`);
+    }
+  }
+
+  return $.html();
+};
+
+const replaceLocalUrlsWithBase64 = async (cssContent: string, cssDir: string): Promise<string> => {
+  return cssContent.replace(/url\(["']?(.*?)["']?\)/g, (match, url) => {
+    if (!isExternalReference(url)) {
+      const imagePath = path.resolve(cssDir, url);
+      const imageContent = fs.readFileSync(imagePath).toString("base64");
+      const mimeType = getImageMimeType(imagePath);
+      const dataUri = `data:${mimeType};base64,${imageContent}`;
+      return `url(${dataUri})`;
+    }
+    return match;
+  });
+};
+
 const getImageMimeType = (imagePath: string): string => {
   const extension = path.extname(imagePath).toLowerCase();
   switch (extension) {
@@ -192,6 +253,15 @@ const getImageMimeType = (imagePath: string): string => {
 
 const isExternalReference = (reference: string): boolean => {
   return /^(https?:)?\/\//i.test(reference);
+};
+
+const replaceSpecialCharacters = (input: string) => {
+  // Replace \" with "
+  // eslint-disable-next-line quotes
+  let result = input.replace(/\\"/g, '"');
+  // Remove \t and \n
+  result = result.replace(/\t|\n/g, "");
+  return result;
 };
 
 export default exportPdf;
