@@ -27,3 +27,10 @@ All notable changes to the "markdown-pdf-plus" extension will be documented in t
 
 - [Mermaid](https://mermaid.js.org/) is supported.
 - Updated the README to include page-customization details.
+# [1.2.1]
+
+- Background images are supported.
+- Fixed the bug where HTML files get overwritten when exporting PDFs.
+- Hid temporary files that used to be visible during script execution.
+- Exporting files to a specified directory now works even with referenced assets in the source file
+  (e.g., CSS files and images).
