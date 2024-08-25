@@ -4,7 +4,6 @@ import path = require("path");
 import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
 import PCR from "puppeteer-chromium-resolver";
-import os from "os";
 import crypto = require("crypto");
 import { RmDirOptions } from "fs";
 
@@ -18,7 +17,12 @@ let conditionalUIMessage = "";
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
-  const { sourceMarkdownFilename, createdHtmlFilename, createdHtmlPath } = await exportHtml(true);
+  const {
+    sourceMarkdownFilename,
+    createdHtmlFilename,
+    createdHtmlPath,
+    afterPuppeteerStartsCallback,
+  } = await exportHtml(true);
 
   if (createdHtmlFilename) {
     const editor = vscode.window.activeTextEditor;
@@ -36,9 +40,11 @@ const exportPdf = async (): Promise<boolean> => {
         fs.unlink(inputHtmlPath, () => {
           console.log("Temporary HTML file deleted.");
         });
-        // delete the temp directory, empty or not
-        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
-        vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
+        // if temp directory exists, delete it and its contents
+        if (fs.existsSync(createdHtmlPath)) {
+          fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+        }
+        vscode.window.showInformationMessage(conditionalUIMessage);
         return false;
       } else {
         outputPdfHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
@@ -48,18 +54,18 @@ const exportPdf = async (): Promise<boolean> => {
 
     const outputPdfPath = path.join(outputPdfHome, outputPdfFilename);
 
-    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath, createdHtmlPath)) {
-      fs.unlink(inputHtmlPath, () => {
-        console.log("Temporary HTML file deleted.");
-      });
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath, afterPuppeteerStartsCallback)) {
+      // if temp directory exists, delete it and its contents
+      if (fs.existsSync(createdHtmlPath)) {
+        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+      }
       vscode.window.showInformationMessage(conditionalUIMessage);
       return true;
     } else {
-      fs.unlink(inputHtmlPath, () => {
-        console.log("Temporary HTML file deleted.");
-      });
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+      // if temp directory exists, delete it and its contents
+      if (fs.existsSync(createdHtmlPath)) {
+        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+      }
       vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
       return false;
     }
@@ -71,10 +77,13 @@ const exportPdf = async (): Promise<boolean> => {
 const convertHtmlToPdf = async (
   htmlFilePath: string,
   pdfFilePath: string,
-  createdHtmlPath: string
+  afterPuppeteerStartsCallback: (() => void) | undefined
 ): Promise<boolean> => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "markdown-pdf-plus-"));
-  const tempHtmlFilePath = path.join(tempDir, `${crypto.randomBytes(20).toString("hex")}.html`);
+  const tempDir = path.dirname(htmlFilePath);
+  const tempHostedHtmlFilePath = path.join(
+    tempDir,
+    `${crypto.randomBytes(20).toString("hex")}.html`
+  );
 
   try {
     const config: vscode.WorkspaceConfiguration =
@@ -87,6 +96,13 @@ const convertHtmlToPdf = async (
       args: ["--no-sandbox"],
       executablePath: stats.executablePath,
     });
+    // for some reason starting puppeteer did a weird thing where
+    // it overwrote the HTML file with the Markdown file in a way.
+    // I have no idea how that was happening. But now we write
+    // the old HTML content back to the file right here.
+    if (afterPuppeteerStartsCallback) {
+      afterPuppeteerStartsCallback();
+    }
     const page = await browser.newPage();
 
     // Emulate screen media type to remove default header and footer
@@ -102,10 +118,10 @@ const convertHtmlToPdf = async (
 
     // Write the modified HTML content to a temporary file
 
-    fs.writeFileSync(tempHtmlFilePath, htmlContent, "utf8");
+    fs.writeFileSync(tempHostedHtmlFilePath, htmlContent, "utf8");
 
     // Set content of the page to the temporary HTML file
-    await page.goto(`file://${tempHtmlFilePath}`, { waitUntil: "networkidle0" });
+    await page.goto(`file://${tempHostedHtmlFilePath}`, { waitUntil: "networkidle0" });
     await addExternalStylesheetsToPage(htmlFilePath, page);
 
     // Generate PDF without the header and footer
@@ -123,17 +139,6 @@ const convertHtmlToPdf = async (
   } catch (error) {
     console.error("Error converting HTML to PDF:", error);
     return false; // Conversion failed
-  } finally {
-    if (fs.existsSync(tempHtmlFilePath)) {
-      fs.unlinkSync(tempHtmlFilePath);
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
-      console.log("Temporary HTML file deleted.");
-    }
-    if (fs.existsSync(tempDir)) {
-      fs.rmdirSync(tempDir);
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
-      console.log("Temporary directory deleted.");
-    }
   }
 };
 
