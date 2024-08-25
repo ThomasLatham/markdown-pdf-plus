@@ -4,6 +4,8 @@ import path = require("path");
 import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
 import PCR from "puppeteer-chromium-resolver";
+import crypto = require("crypto");
+import { RmDirOptions } from "fs";
 
 import UIMessages from "../constants/uiMessages";
 import exportHtml from "./export.html";
@@ -15,31 +17,22 @@ let conditionalUIMessage = "";
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
-  const [inputMarkdownFilename, inputHtmlFilename] = await exportHtml(true);
+  const {
+    sourceMarkdownFilename,
+    createdHtmlFilename,
+    createdHtmlPath,
+    afterPuppeteerStartsCallback,
+  } = await exportHtml(true);
 
-  if (inputHtmlFilename) {
+  if (createdHtmlFilename) {
     const editor = vscode.window.activeTextEditor;
 
     if (!editor || !isMdDocument(editor?.document)) {
       vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
       return false;
     }
-    const doc: vscode.TextDocument = editor.document;
 
-    let inputHtmlHome = path.parse(doc.fileName).dir;
-    if (!inputHtmlHome) {
-      if (!vscode.window.activeTextEditor) {
-        fs.unlink(inputHtmlFilename, () => {
-          console.log("Temporary HTML file deleted.");
-        });
-        vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
-        return false;
-      } else {
-        inputHtmlHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
-      }
-    }
-
-    const inputHtmlPath = path.join(inputHtmlHome, inputHtmlFilename);
+    const inputHtmlPath = path.join(createdHtmlPath, createdHtmlFilename);
 
     let outputPdfHome = config.get("outputHome", "");
     if (!outputPdfHome) {
@@ -47,27 +40,32 @@ const exportPdf = async (): Promise<boolean> => {
         fs.unlink(inputHtmlPath, () => {
           console.log("Temporary HTML file deleted.");
         });
-        vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
+        // if temp directory exists, delete it and its contents
+        if (fs.existsSync(createdHtmlPath)) {
+          fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+        }
+        vscode.window.showInformationMessage(conditionalUIMessage);
         return false;
       } else {
         outputPdfHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
       }
     }
-    const outputPdfFilename = `${config.get("outputFilename", "") || inputMarkdownFilename}.pdf`;
+    const outputPdfFilename = `${config.get("outputFilename", "") || sourceMarkdownFilename}.pdf`;
 
     const outputPdfPath = path.join(outputPdfHome, outputPdfFilename);
 
-    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath)) {
-      fs.unlink(inputHtmlPath, () => {
-        console.log("Temporary HTML file deleted.");
-      });
-
+    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath, afterPuppeteerStartsCallback)) {
+      // if temp directory exists, delete it and its contents
+      if (fs.existsSync(createdHtmlPath)) {
+        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+      }
       vscode.window.showInformationMessage(conditionalUIMessage);
       return true;
     } else {
-      fs.unlink(inputHtmlPath, () => {
-        console.log("Temporary HTML file deleted.");
-      });
+      // if temp directory exists, delete it and its contents
+      if (fs.existsSync(createdHtmlPath)) {
+        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+      }
       vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
       return false;
     }
@@ -76,7 +74,17 @@ const exportPdf = async (): Promise<boolean> => {
   }
 };
 
-const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Promise<boolean> => {
+const convertHtmlToPdf = async (
+  htmlFilePath: string,
+  pdfFilePath: string,
+  afterPuppeteerStartsCallback: (() => void) | undefined
+): Promise<boolean> => {
+  const tempDir = path.dirname(htmlFilePath);
+  const tempHostedHtmlFilePath = path.join(
+    tempDir,
+    `${crypto.randomBytes(20).toString("hex")}.html`
+  );
+
   try {
     const config: vscode.WorkspaceConfiguration =
       vscode.workspace.getConfiguration("markdown-pdf-plus");
@@ -88,17 +96,34 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
       args: ["--no-sandbox"],
       executablePath: stats.executablePath,
     });
+    // for some reason starting puppeteer did a weird thing where
+    // it overwrote the HTML file with the Markdown file in a way.
+    // I have no idea how that was happening. But now we write
+    // the old HTML content back to the file right here.
+    if (afterPuppeteerStartsCallback) {
+      afterPuppeteerStartsCallback();
+    }
     const page = await browser.newPage();
 
     // Emulate screen media type to remove default header and footer
     await page.emulateMediaType("screen");
 
-    // Set content of the page to the HTML file
-    const htmlContent = replaceLocalImgSrcWithBase64(
-      await fs.promises.readFile(htmlFilePath, "utf8")
+    // Replace local images with base64
+    const htmlContent = replaceSpecialCharacters(
+      await replaceLocalBackgroundImagesWithBase64InMemory(
+        replaceLocalImgSrcWithBase64(await fs.promises.readFile(htmlFilePath, "utf8")),
+        htmlFilePath
+      )
     );
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    // Write the modified HTML content to a temporary file
+
+    fs.writeFileSync(tempHostedHtmlFilePath, htmlContent, "utf8");
+
+    // Set content of the page to the temporary HTML file
+    await page.goto(`file://${tempHostedHtmlFilePath}`, { waitUntil: "networkidle0" });
     await addExternalStylesheetsToPage(htmlFilePath, page);
+
     // Generate PDF without the header and footer
     await page.pdf({
       path: pdfFilePath,
@@ -173,6 +198,43 @@ const replaceLocalImgSrcWithBase64 = (htmlContent: string): string => {
   return $.html();
 };
 
+const replaceLocalBackgroundImagesWithBase64InMemory = async (
+  htmlContent: string,
+  htmlFilePath: string
+): Promise<string> => {
+  const $ = load(htmlContent);
+
+  // Process each linked CSS file
+  const stylesheets = extractStylesheetsFromHtml(htmlContent, htmlFilePath);
+  for (const stylesheet of stylesheets) {
+    if (!stylesheet.isExternal) {
+      const cssContent = await fs.promises.readFile(stylesheet.path, "utf8");
+      const updatedCssContent = await replaceLocalUrlsWithBase64(
+        cssContent,
+        path.dirname(stylesheet.path)
+      );
+
+      // Inject the modified CSS content into the HTML
+      $("head").append(`<style>${updatedCssContent}</style>`);
+    }
+  }
+
+  return $.html();
+};
+
+const replaceLocalUrlsWithBase64 = async (cssContent: string, cssDir: string): Promise<string> => {
+  return cssContent.replace(/url\(["']?(.*?)["']?\)/g, (match, url) => {
+    if (!isExternalReference(url)) {
+      const imagePath = path.resolve(cssDir, url);
+      const imageContent = fs.readFileSync(imagePath).toString("base64");
+      const mimeType = getImageMimeType(imagePath);
+      const dataUri = `data:${mimeType};base64,${imageContent}`;
+      return `url(${dataUri})`;
+    }
+    return match;
+  });
+};
+
 const getImageMimeType = (imagePath: string): string => {
   const extension = path.extname(imagePath).toLowerCase();
   switch (extension) {
@@ -192,6 +254,15 @@ const getImageMimeType = (imagePath: string): string => {
 
 const isExternalReference = (reference: string): boolean => {
   return /^(https?:)?\/\//i.test(reference);
+};
+
+const replaceSpecialCharacters = (input: string) => {
+  // Replace \" with "
+  // eslint-disable-next-line quotes
+  let result = input.replace(/\\"/g, '"');
+  // Remove \t and \n
+  result = result.replace(/\t|\n/g, "");
+  return result;
 };
 
 export default exportPdf;
