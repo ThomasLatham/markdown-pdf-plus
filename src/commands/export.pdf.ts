@@ -4,7 +4,6 @@ import path = require("path");
 import puppeteer, { Page } from "puppeteer";
 import { load } from "cheerio";
 import PCR from "puppeteer-chromium-resolver";
-import os from "os";
 import crypto = require("crypto");
 
 import UIMessages from "../constants/uiMessages";
