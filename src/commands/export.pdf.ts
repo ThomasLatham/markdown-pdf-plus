@@ -79,8 +79,10 @@ const exportPdf = async (): Promise<boolean> => {
 };
 
 const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Promise<boolean> => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "markdown-pdf-plus-"));
-  const tempHtmlFilePath = path.join(tempDir, `${crypto.randomBytes(20).toString("hex")}.html`);
+  const tempHtmlFilePath = path.join(
+    path.dirname(htmlFilePath),
+    `${crypto.randomBytes(20).toString("hex")}.html`
+  );
 
   try {
     const config: vscode.WorkspaceConfiguration =
@@ -133,10 +135,6 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     if (fs.existsSync(tempHtmlFilePath)) {
       fs.unlinkSync(tempHtmlFilePath);
       console.log("Temporary HTML file deleted.");
-    }
-    if (fs.existsSync(tempDir)) {
-      fs.rmdirSync(tempDir);
-      console.log("Temporary directory deleted.");
     }
   }
 };
