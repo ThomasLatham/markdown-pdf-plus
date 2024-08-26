@@ -38,4 +38,9 @@ All notable changes to the "markdown-pdf-plus" extension will be documented in t
 
 # [1.2.2]
 
+- ~~Background images are supported.~~
+- Still broken.
+
+# [1.2.3]
+
 - Background images are supported.
