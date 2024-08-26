@@ -57,6 +57,18 @@ This extension contributes the following settings:
   [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule declared in CSS priority
   over the extension's default page settings.
 
+## Known Issues
+
+### Exporting PDF overwrites HTML
+
+1. Export a Markdown file (`my_file.md`, for example) to HTML resulting in `my_file.html`.
+2. Make some changes to the Markdown file and save them.
+3. Export the same Markdown file to PDF, resulting in `my_file.pdf`.
+
+Expected result: The changes made in step 2. should not be reflected in `my_file.html`.
+
+Actual result: The changes made in step 2. are reflected in `my_file.html`.
+
 ## Release Notes
 
 See the [changelog](CHANGELOG.md).
