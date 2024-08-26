@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { ExtensionContext, Uri, Webview } from "vscode";
+import path from "path";
 
 import LanguageIdentifiers from "../constants/languageIdentifiers";
 

@@ -6,7 +6,6 @@ import { load } from "cheerio";
 import PCR from "puppeteer-chromium-resolver";
 import os from "os";
 import crypto = require("crypto");
-import { RmDirOptions } from "fs";
 
 import UIMessages from "../constants/uiMessages";
 import exportHtml from "./export.html";
@@ -18,17 +17,31 @@ let conditionalUIMessage = "";
 const exportPdf = async (): Promise<boolean> => {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration("markdown-pdf-plus");
-  const { sourceMarkdownFilename, createdHtmlFilename, createdHtmlPath } = await exportHtml(true);
+  const [inputMarkdownFilename, inputHtmlFilename] = await exportHtml(true);
 
-  if (createdHtmlFilename) {
+  if (inputHtmlFilename) {
     const editor = vscode.window.activeTextEditor;
 
     if (!editor || !isMdDocument(editor?.document)) {
       vscode.window.showErrorMessage(UIMessages.noValidMarkdownFile);
       return false;
     }
+    const doc: vscode.TextDocument = editor.document;
 
-    const inputHtmlPath = path.join(createdHtmlPath, createdHtmlFilename);
+    let inputHtmlHome = path.parse(doc.fileName).dir;
+    if (!inputHtmlHome) {
+      if (!vscode.window.activeTextEditor) {
+        fs.unlink(inputHtmlFilename, () => {
+          console.log("Temporary HTML file deleted.");
+        });
+        vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
+        return false;
+      } else {
+        inputHtmlHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
+      }
+    }
+
+    const inputHtmlPath = path.join(inputHtmlHome, inputHtmlFilename);
 
     let outputPdfHome = config.get("outputHome", "");
     if (!outputPdfHome) {
@@ -36,30 +49,27 @@ const exportPdf = async (): Promise<boolean> => {
         fs.unlink(inputHtmlPath, () => {
           console.log("Temporary HTML file deleted.");
         });
-        // delete the temp directory, empty or not
-        fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
         vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
         return false;
       } else {
         outputPdfHome = path.parse(vscode.window.activeTextEditor.document.fileName).dir;
       }
     }
-    const outputPdfFilename = `${config.get("outputFilename", "") || sourceMarkdownFilename}.pdf`;
+    const outputPdfFilename = `${config.get("outputFilename", "") || inputMarkdownFilename}.pdf`;
 
     const outputPdfPath = path.join(outputPdfHome, outputPdfFilename);
 
-    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath, createdHtmlPath)) {
+    if (await convertHtmlToPdf(inputHtmlPath, outputPdfPath)) {
       fs.unlink(inputHtmlPath, () => {
         console.log("Temporary HTML file deleted.");
       });
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
+
       vscode.window.showInformationMessage(conditionalUIMessage);
       return true;
     } else {
       fs.unlink(inputHtmlPath, () => {
         console.log("Temporary HTML file deleted.");
       });
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
       vscode.window.showErrorMessage(UIMessages.exportToPdfFailed);
       return false;
     }
@@ -68,11 +78,7 @@ const exportPdf = async (): Promise<boolean> => {
   }
 };
 
-const convertHtmlToPdf = async (
-  htmlFilePath: string,
-  pdfFilePath: string,
-  createdHtmlPath: string
-): Promise<boolean> => {
+const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Promise<boolean> => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "markdown-pdf-plus-"));
   const tempHtmlFilePath = path.join(tempDir, `${crypto.randomBytes(20).toString("hex")}.html`);
 
@@ -126,12 +132,10 @@ const convertHtmlToPdf = async (
   } finally {
     if (fs.existsSync(tempHtmlFilePath)) {
       fs.unlinkSync(tempHtmlFilePath);
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
       console.log("Temporary HTML file deleted.");
     }
     if (fs.existsSync(tempDir)) {
       fs.rmdirSync(tempDir);
-      fs.rmdirSync(createdHtmlPath, { recursive: true, force: true } as RmDirOptions);
       console.log("Temporary directory deleted.");
     }
   }
