@@ -100,15 +100,12 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     await page.emulateMediaType("screen");
 
     // Replace local images with base64
-    const htmlContent = replaceSpecialCharacters(
-      await replaceLocalBackgroundImagesWithBase64InMemory(
-        replaceLocalImgSrcWithBase64(await fs.promises.readFile(htmlFilePath, "utf8")),
-        htmlFilePath
-      )
+    const htmlContent = await replaceLocalBackgroundImagesWithBase64InMemory(
+      replaceLocalImgSrcWithBase64(await fs.promises.readFile(htmlFilePath, "utf8")),
+      htmlFilePath
     );
 
     // Write the modified HTML content to a temporary file
-
     fs.writeFileSync(tempHtmlFilePath, htmlContent, "utf8");
 
     // Set content of the page to the temporary HTML file
@@ -250,15 +247,6 @@ const getImageMimeType = (imagePath: string): string => {
 
 const isExternalReference = (reference: string): boolean => {
   return /^(https?:)?\/\//i.test(reference);
-};
-
-const replaceSpecialCharacters = (input: string) => {
-  // Replace \" with "
-  // eslint-disable-next-line quotes
-  let result = input.replace(/\\"/g, '"');
-  // Remove \t and \n
-  result = result.replace(/\t|\n/g, "");
-  return result;
 };
 
 export default exportPdf;
