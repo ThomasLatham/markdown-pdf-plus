@@ -99,11 +99,18 @@ const convertHtmlToPdf = async (htmlFilePath: string, pdfFilePath: string): Prom
     // Emulate screen media type to remove default header and footer
     await page.emulateMediaType("screen");
 
-    // Replace local images with base64
-    const htmlContent = await replaceLocalBackgroundImagesWithBase64InMemory(
-      replaceLocalImgSrcWithBase64(await fs.promises.readFile(htmlFilePath, "utf8")),
-      htmlFilePath
-    );
+    const htmlContent = 
+      // 4. add page style to the html content
+      await injectPageStyle(
+        // 3. replace local background images (CSS) with base64
+        await replaceLocalBackgroundImagesWithBase64InMemory(
+          // 2. replace local images (HTML) with base64
+          replaceLocalImgSrcWithBase64(
+            // 1. read the HTML content
+            await fs.promises.readFile(htmlFilePath, "utf8")),
+          htmlFilePath
+        )
+      );
 
     // Write the modified HTML content to a temporary file
     fs.writeFileSync(tempHtmlFilePath, htmlContent, "utf8");
@@ -249,13 +256,34 @@ const isExternalReference = (reference: string): boolean => {
   return /^(https?:)?\/\//i.test(reference);
 };
 
-/* We need a method that will write a `<style>` element into the HTML.
- * This element will contain an `@page` rule with the details from the extension settings
- * (i.e., margin-top, margin-bottom, margin-left, margin-right and size).
- * Somehow it needs to have priority over any other ways these could be set (e.g.,
- * in another style tag, in an external CSS sheet).
- * Further, it should only set each property if there is a non-empty value for that property
- * in the setting.
+/**
+ * Injects page style into the HTML content.
+ * @param htmlContent The HTML content to inject the page style into.
+ * @returns The HTML content with the injected page style.
  */
+const injectPageStyle = async (htmlContent: string): Promise<string> => {
+  const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration("markdown-pdf-plus");
+
+  const marginTop = config.get("marginTop", "70px");
+  const marginBottom = config.get("marginBottom", "70px");
+  const marginLeft = config.get("marginLeft", "70px");
+  const marginRight = config.get("marginRight", "70px");
+  const pageSize = config.get("pageSize", "a4");
+
+  let styleContent = "@page {";
+
+  if (marginTop) styleContent += ` margin-top: ${marginTop};`;
+  if (marginBottom) styleContent += ` margin-bottom: ${marginBottom};`;
+  if (marginLeft) styleContent += ` margin-left: ${marginLeft};`;
+  if (marginRight) styleContent += ` margin-right: ${marginRight};`;
+  if (pageSize) styleContent += ` size: ${pageSize};`;
+
+  styleContent += " }";
+
+  const $ = load(htmlContent);
+  $("head").append(`<style>${styleContent}</style>`);
+
+  return $.html();
+};
 
 export default exportPdf;
