@@ -41,22 +41,22 @@
         "markdown-pdf-plus.marginTop": {
           "type": "string",
           "default": "70px",
-          "markdownDescription": "The width of the top margin of pages for exported PDFs."
+          "markdownDescription": "The width of the top margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
         },
         "markdown-pdf-plus.marginBottom": {
           "type": "string",
           "default": "70px",
-          "markdownDescription": "The width of the bottom margin of pages for exported PDFs."
+          "markdownDescription": "The width of the bottom margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
         },
         "markdown-pdf-plus.marginLeft": {
           "type": "string",
           "default": "70px",
-          "markdownDescription": "The width of the left margin of pages for exported PDFs."
+          "markdownDescription": "The width of the left margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
         },
         "markdown-pdf-plus.marginRight": {
           "type": "string",
           "default": "70px",
-          "markdownDescription": "The width of the right margin of pages for exported PDFs."
+          "markdownDescription": "The width of the right margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
         },
         "markdown-pdf-plus.pageSize": {
           "type": "string",
