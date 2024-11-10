@@ -249,4 +249,13 @@ const isExternalReference = (reference: string): boolean => {
   return /^(https?:)?\/\//i.test(reference);
 };
 
+/* We need a method that will write a `<style>` element into the HTML.
+ * This element will contain an `@page` rule with the details from the extension settings
+ * (i.e., margin-top, margin-bottom, margin-left, margin-right and size).
+ * Somehow it needs to have priority over any other ways these could be set (e.g.,
+ * in another style tag, in an external CSS sheet).
+ * Further, it should only set each property if there is a non-empty value for that property
+ * in the setting.
+ */
+
 export default exportPdf;

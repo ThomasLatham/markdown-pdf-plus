@@ -38,6 +38,32 @@
     "configuration": {
       "title": "Markdown PDF Plus",
       "properties": {
+        "markdown-pdf-plus.marginTop": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the top margin of pages for exported PDFs."
+        },
+        "markdown-pdf-plus.marginBottom": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the bottom margin of pages for exported PDFs."
+        },
+        "markdown-pdf-plus.marginLeft": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the left margin of pages for exported PDFs."
+        },
+        "markdown-pdf-plus.marginRight": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the right margin of pages for exported PDFs."
+        },
+        "markdown-pdf-plus.pageSize": {
+          "type": "string",
+          "default": "a4",
+          // TODO: add a link to available page sizes
+          "markdownDescription": "The size of the page. Available choices and descriptions can be found [here]()."
+        },
         "markdown-pdf-plus.outputHome": {
           "type": "string",
           "default": "",
