@@ -61,7 +61,7 @@
         "markdown-pdf-plus.pageSize": {
           "type": "string",
           "default": "a4",
-          "markdownDescription": "The size of the page. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information."
+          "markdownDescription": "The size of pages for exported PDFs. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information."
         },
         "markdown-pdf-plus.outputHome": {
           "type": "string",
