@@ -1,6 +1,6 @@
 {
   "name": "markdown-pdf-plus",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "publisher": "tom-latham",
   "engines": {
     "vscode": "^1.75.0"
@@ -38,6 +38,31 @@
     "configuration": {
       "title": "Markdown PDF Plus",
       "properties": {
+        "markdown-pdf-plus.marginTop": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the top margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
+        },
+        "markdown-pdf-plus.marginBottom": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the bottom margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
+        },
+        "markdown-pdf-plus.marginLeft": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the left margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
+        },
+        "markdown-pdf-plus.marginRight": {
+          "type": "string",
+          "default": "70px",
+          "markdownDescription": "The width of the right margin of pages for exported PDFs. \n\n Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options."
+        },
+        "markdown-pdf-plus.pageSize": {
+          "type": "string",
+          "default": "a4",
+          "markdownDescription": "The size of pages for exported PDFs. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information."
+        },
         "markdown-pdf-plus.outputHome": {
           "type": "string",
           "default": "",

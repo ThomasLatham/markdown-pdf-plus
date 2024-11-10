@@ -2,7 +2,7 @@
 
 Export Markdown as PDF or HTML. Customize the output with CSS and images!
 
-## Features
+## Commands
 
 ### Export PDF
 
@@ -29,10 +29,30 @@ Demo:
 Demo: See the demo for Export PDF —— it's the same flow, except with the HTML command rather than
 the PDF one.
 
-### Page Customization (Margins, Page Breaks, Etc.)
+## Extension Settings
 
-Page properties of exported PDFs (e.g., margins, page size) can be customized via creating CSS that
-includes an
+This extension contributes the following settings:
+
+- `markdown-pdf-plus.marginTop`: The width* of the top margin of pages for exported PDFs.
+- `markdown-pdf-plus.marginBottom`: The width* of the bottom margin of pages for exported PDFs.
+- `markdown-pdf-plus.marginLeft`: The width* of the left margin of pages for exported PDFs.
+- `markdown-pdf-plus.marginRight`: The width* of the right margin of pages for exported PDFs.
+- `markdown-pdf-plus.pageSize`: The size of pages for exported PDFs. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information.
+- `markdown-pdf-plus.outputHome`: The path of the directory where you wish your exported file to be
+  created (without trailing slash). If empty, defaults to the directory of the currently-open file
+  when a relevant command is called.
+- `markdown-pdf-plus.outputFilename`: The filename under which you wish your exported file to be
+  created (without any given extension). If empty, defaults to the name of your input file.
+- `markdown-pdf-plus.usePageStyleFromCSS`: Give any
+  [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule declared in CSS priority
+  over the extension's default page settings.
+
+*Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options
+
+## Page Customization (Margins, Page Breaks, Etc.)
+
+In lieu of using the contributed extension settings, page properties of exported PDFs (e.g.,
+margins, page size) can be customized via creating CSS that includes an 
 [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule and inserting that CSS into
 the PDF's source Markdown file. For a more detailed example please see [this
 answer](https://github.com/ThomasLatham/markdown-pdf-plus/issues/5#issuecomment-2180816708) to a related
@@ -44,18 +64,6 @@ desired. For reference please see [this
 answer](https://github.com/ThomasLatham/markdown-pdf-plus/issues/6#issuecomment-2111540362) to a
 related issue on this project's GitHub.
 
-## Extension Settings
-
-This extension contributes the following settings:
-
-- `markdown-pdf-plus.outputHome`: The path of the directory where you wish your exported file to be
-  created (without trailing slash). If empty, defaults to the directory of the currently-open file
-  when a relevant command is called.
-- `markdown-pdf-plus.outputFilename`: The filename under which you wish your exported file to be
-  created (without any given extension). If empty, defaults to the name of your input file.
-- `markdown-pdf-plus.usePageStyleFromCSS`: Give any
-  [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule declared in CSS priority
-  over the extension's default page settings.
 
 ## Known Issues
 
