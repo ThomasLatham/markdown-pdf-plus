@@ -1,4 +1,19 @@
-This document outlines how to customize the styling (such as margins and fonts) of an exported PDF file. To help explain how this can be done with Markdown PDF Plus, let's reference [this project of mine](https://github.com/ThomasLatham/markdown-resume-template/tree/main/resume), a resume template that I wrote in Markdown, styled with CSS and exported to PDF:
+This document outlines the precedence of different methods of styling exports and outlines how to
+customize the styling (such as margins and fonts) of an exported PDF file via `<style>` tags
+embedded directly in the Markdown source.
+
+# CSS Precedence
+There are different ways to achieve styling of exported files with Markdown PDF Plus, and so in the
+case that multiple ways are used simultaneously, it's important to know the order in which they are
+applied during export in order to avoid unintended results. Below is the order of precedence for
+styles (such that styles defined in methods higher on the list will override those defined in methods lower on the list):
+1. In-line styles in raw HTML embedded in source Markdown.
+2. Styles defined in the extension setting `markdown-pdf-plus.CSSRaw`.
+3. Styles defined in a stylesheet located at the path provided by the extension setting `markdown-pdf-plus.CSSPath`.
+4. Styles defined within `<style>` tags embedded the source Markdown, and styles defined in a stylesheet referenced by a `<link>` element in the source Markdown
+
+# Defining Styles within Markdown-Embedded `<style>` Tags
+ To help explain how this can be done with Markdown PDF Plus, let's reference [this project of mine](https://github.com/ThomasLatham/markdown-resume-template/tree/main/resume), a resume template that I wrote in Markdown, styled with CSS and exported to PDF:
 
 1. Click on the link above to navigate to the `resume` directory in the `markdown-resume-template` repo.
 

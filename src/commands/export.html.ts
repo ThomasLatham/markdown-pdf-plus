@@ -70,6 +70,20 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<[string, strin
     // convert mermaid blocks
     htmlContent = convertMermaidBlocks(htmlContent);
 
+    // Add the extension-setting CSS to the HTML content
+    const stylesheetPathFromExtensionSettings = config.get("CSSPath", "");
+    if (stylesheetPathFromExtensionSettings && fs.existsSync(stylesheetPathFromExtensionSettings)) {
+      const stylesheetContent = fs.readFileSync(stylesheetPathFromExtensionSettings, "utf-8");
+      const styleTag = `<style>${stylesheetContent}</style>`;
+      htmlContent += styleTag;
+    }
+
+    const rawStylesFromExtensionSettings = config.get("CSSRaw", "");
+    if (rawStylesFromExtensionSettings) {
+      const styleTag = `<style>${rawStylesFromExtensionSettings}</style>`;
+      htmlContent += styleTag;
+    }
+
     // Write the modified HTML content back to the file
     fs.writeFileSync(htmlFilePath, htmlContent);
   } catch (error) {

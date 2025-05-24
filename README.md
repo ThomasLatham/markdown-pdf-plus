@@ -37,7 +37,13 @@ This extension contributes the following settings:
 - `markdown-pdf-plus.marginBottom`: The width* of the bottom margin of pages for exported PDFs.
 - `markdown-pdf-plus.marginLeft`: The width* of the left margin of pages for exported PDFs.
 - `markdown-pdf-plus.marginRight`: The width* of the right margin of pages for exported PDFs.
-- `markdown-pdf-plus.pageSize`: The size of pages for exported PDFs. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information.
+- `markdown-pdf-plus.pageSize`: The size of pages for exported PDFs. See the
+  [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS
+  at-rule descriptor, used with the `@page` at-rule, for more information.
+- `markdown-pdf-plus.CSSPath`: The path of the CSS file you wish to use to style exported documents.
+  See the [custom CSS documentation](./docs/customCss.md) for rule-precedence details.
+- `markdown-pdf-plus.CSSRaw`: The raw CSS you wish to use to style exported documents. E.g., `body {
+  color: red; }`.   See the [custom CSS documentation](./docs/customCss.md) for rule-precedence details.
 - `markdown-pdf-plus.outputHome`: The path of the directory where you wish your exported file to be
   created (without trailing slash). If empty, defaults to the directory of the currently-open file
   when a relevant command is called.
@@ -47,18 +53,21 @@ This extension contributes the following settings:
   [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule declared in CSS priority
   over the extension's default page settings.
 
-*Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#absolute_length_units) for more options
+*Available units include `px`, `cm` and `in`. See Mozilla's documentation on [length
+units](https://developer.mozilla.org/en-US/docs/Web/CSSlength#absolute_length_units) for more options
 
-## Page Customization (Margins, Page Breaks, Etc.)
+## Page Customization (Margins, Page Breaks, Etc.) and Custom CSS
+
+Please see the [custom CSS documentation](./docs/customCss.md) for details regarding styling
+exported documents.
 
 In lieu of using the contributed extension settings, page properties of exported PDFs (e.g.,
 margins, page size) can be customized via creating CSS that includes an 
 [@page](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule and inserting that CSS into
-the PDF's source Markdown file. For a more detailed example please see [this reference](./docs/customCss.md)
+the PDF's source Markdown file. For a more detailed example please see the [custom CSS documentation](./docs/customCss.md)
 
 Page breaks can be rendered in exported PDFs by inserting `<div
-style="page-break-before:always"></div>` into the source Markdown file wherever a page break is
-desired.
+style="page-break-before:always"></div>` into the source Markdown file wherever a page break is desired.
 
 
 ## Known Issues

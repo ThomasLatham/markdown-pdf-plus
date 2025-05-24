@@ -1,6 +1,6 @@
 {
   "name": "markdown-pdf-plus",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "tom-latham",
   "engines": {
     "vscode": "^1.75.0"
@@ -62,6 +62,16 @@
           "type": "string",
           "default": "a4",
           "markdownDescription": "The size of pages for exported PDFs. See the [documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@page/size) for the size CSS at-rule descriptor, used with the `@page` at-rule, for more information."
+        },
+        "markdown-pdf-plus.CSSPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The path of the CSS file you wish to use to style exported documents."
+        },
+        "markdown-pdf-plus.CSSRaw": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "The raw CSS you wish to use to style exported documents. \n\n E.g., `body { color: red; }`."
         },
         "markdown-pdf-plus.outputHome": {
           "type": "string",
