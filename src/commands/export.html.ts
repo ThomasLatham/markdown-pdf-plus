@@ -53,7 +53,7 @@ const exportHtml = async (isCalledFromExportPdf = false): Promise<[string, strin
     // Modify the HTML content to render Mermaid diagrams as SVGs
     const mermaidScript = `
     <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true });
     </script>`;
 
