@@ -1,0 +1,3 @@
+h1 { color: rebeccapurple; }
+.bg-box { background: url("bg.png") no-repeat; background-size: 40px; padding-left: 50px; height: 40px; }
+.bg-box::after { content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><circle cx='5' cy='5' r='5' fill='red'/></svg>"); }

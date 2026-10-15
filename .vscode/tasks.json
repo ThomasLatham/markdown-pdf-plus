@@ -5,16 +5,27 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "watch",
-			"problemMatcher": "$tsc-watch",
-			"isBackground": true,
+			"script": "build",
+			"problemMatcher": "$esbuild",
 			"presentation": {
-				"reveal": "never"
+				"reveal": "silent"
 			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		{
+			"type": "npm",
+			"script": "compile",
+			"problemMatcher": "$tsc",
+			"presentation": {
+				"reveal": "silent"
+			}
+		},
+		{
+			"label": "build and compile tests",
+			"dependsOn": ["npm: build", "npm: compile"]
 		}
 	]
 }
