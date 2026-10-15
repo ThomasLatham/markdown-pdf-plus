@@ -1,40 +1,37 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
-import * as path from "path";
 
-const manifest = fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf8");
-const meta = JSON.parse(manifest);
+import { ExportFormat } from "./export/document";
+import { exportMarkdown, ExportServices } from "./export/exporter";
+import { closeBrowser } from "./pdf/browser";
 
-/**
- * The `activate()` function for this project is setup such that commands are automatically registered,
- * so long as:
- *
- * - There is an entry for the command in the manifest, and its `command`
- * 	attribute has the value "extension-name.command-name".
- *
- * </br>
- *
- * - There is a file in the `src/commands` directory named "command-name.ts"
- * 	whose default export is the desired callback
- * 	to be used for that command's `vscode.commands.registerCommand()`.
- *
- */
-const activate = async (context: vscode.ExtensionContext): Promise<vscode.ExtensionContext> => {
-  // Loop through the commands in the manifest.
+export const activate = (context: vscode.ExtensionContext): void => {
+  const services: ExportServices = {
+    context,
+    log: vscode.window.createOutputChannel("Markdown PDF Plus", { log: true }),
+  };
+
+  // From the Explorer context menu, commands receive the clicked file and every selected file.
+  const exportCommand =
+    (format: ExportFormat) =>
+    async (resource?: vscode.Uri, selected?: vscode.Uri[]): Promise<string | undefined> => {
+      const targets = selected?.length ? selected : [resource];
+      let lastOutput: string | undefined;
+      for (const target of targets) {
+        lastOutput = await exportMarkdown(
+          services,
+          format,
+          target instanceof vscode.Uri ? target : undefined
+        );
+      }
+      return lastOutput;
+    };
+
   context.subscriptions.push(
-    ...meta.contributes.commands.map(async (commandObj: { command: string; title: string }) => {
-      // Import the current command function from the `commands` directory
-      const commandFunction = await import(
-        `./commands/${commandObj.command.split(`${meta.name}.`)[1]}`
-      );
-      // Register the command
-      return vscode.commands.registerCommand(commandObj.command, commandFunction.default);
-    })
+    services.log,
+    vscode.commands.registerCommand("markdown-pdf-plus.export.pdf", exportCommand("pdf")),
+    vscode.commands.registerCommand("markdown-pdf-plus.export.html", exportCommand("html")),
+    { dispose: () => void closeBrowser() }
   );
-  return context;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const deactivate = () => {};
-
-export { activate, deactivate };
+export const deactivate = (): Promise<void> => closeBrowser();

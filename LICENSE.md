@@ -6,24 +6,12 @@ License: MIT
 
 ## Third-Party Software
 
-### [The Microsoft Corporation](https://github.com/microsoft)
-
-Copyright (c) Microsoft Corporation. All rights reserved.
-
-License: MIT
-
-- code from
-  [utils.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/utils.ts)
-  used in:
-  - `src/test/util/general.ts`
-- code from
-  [test.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/singlefolder-tests/editor.test.ts)
-  used in:
-  - `src/test/util/general.ts`
-- code from
-  [memfs.ts](https://github.com/microsoft/vscode/blob/main/extensions/vscode-api-tests/src/memfs.ts)
-  used in:
-  - `src/test/util/memfs.ts`
+The packaged extension bundles third-party open-source software, including
+[Mermaid](https://github.com/mermaid-js/mermaid) (MIT),
+[Puppeteer](https://github.com/puppeteer/puppeteer) (Apache-2.0) and
+[cheerio](https://github.com/cheeriojs/cheerio) (MIT). The full list of bundled packages, with
+their licenses, is generated at build time in `dist/ThirdPartyNotices.txt`, which is included in
+the packaged extension.
 
 ### [张宇](https://github.com/yzhang-gh)
 
@@ -31,11 +19,10 @@ Copyright (c) 2017 张宇. All rights reserved.
 
 License: MIT
 
-- [vscode-markdown](https://github.com/yzhang-gh/vscode-markdown) is a dependency of this extension
-- code from
-  [generic.ts](https://github.com/yzhang-gh/vscode-markdown/blob/master/src/util/generic.ts) used
-  in:
-  - `src/utl/general.ts`
+- The check for Markdown documents (including the `markdown.extension.extraLangIds` setting) in
+  `src/export/exporter.ts` is based on
+  [generic.ts](https://github.com/yzhang-gh/vscode-markdown/blob/master/src/util/generic.ts) from
+  [vscode-markdown](https://github.com/yzhang-gh/vscode-markdown).
 
 ## License Text
 

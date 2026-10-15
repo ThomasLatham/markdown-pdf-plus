@@ -10,7 +10,11 @@ styles (such that styles defined in methods higher on the list will override tho
 1. In-line styles in raw HTML embedded in source Markdown.
 2. Styles defined in the extension setting `markdown-pdf-plus.CSSRaw`.
 3. Styles defined in a stylesheet located at the path provided by the extension setting `markdown-pdf-plus.CSSPath`.
-4. Styles defined within `<style>` tags embedded the source Markdown, and styles defined in a stylesheet referenced by a `<link>` element in the source Markdown
+4. Styles defined within `<style>` tags embedded the source Markdown, and styles defined in a stylesheet referenced by a `<link>` element in the source Markdown.
+5. Styles from VS Code's `markdown.styles` setting, then the Markdown preview's own styles.
+
+`@page` rules are the exception: the page size and margin settings override `@page` rules from any
+of the above, unless `markdown-pdf-plus.usePageStyleFromCSS` is `true`.
 
 # Defining Styles within Markdown-Embedded `<style>` Tags
  To help explain how this can be done with Markdown PDF Plus, let's reference [this project of mine](https://github.com/ThomasLatham/markdown-resume-template/tree/main/resume), a resume template that I wrote in Markdown, styled with CSS and exported to PDF:
@@ -26,7 +30,7 @@ Markdown allows developers to embed raw HTML directly into documents (as seen he
   - The [`href`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#href) attribute has a value of `"resume.css"`. This attribute tells the HTML where to find the style sheet via a URL. The URL in this example is relative to the Markdown file (the CSS file is in the same directory as the Markdown file, as we'll see), but the value of `href` can also be a URL to a CSS file file stored somewhere on the Web.
 
 1. Navigate back to the location in step (1.), and click on `resume.css`. Notice that this is the file to which we pointed using the `href` attribute in the step (3.). Now let's analyze some details of this style sheet:
-  - The [`@page`](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule allows us to define particulars of exported PDF pages, such as the margin widths and the page size. Note that the extension setting `markdown-pdf-plus.usePageStyleFromCSS` *should* be set to `true` in order for this to work (although I think there may be a bug causing the `@page` rules to override default styles regardless of that setting).
+  - The [`@page`](https://developer.mozilla.org/en-US/docs/Web/CSS/@page) at-rule allows us to define particulars of exported PDF pages, such as the margin widths and the page size. Note that the extension setting `markdown-pdf-plus.usePageStyleFromCSS` must be set to `true` for these rules to take priority over the extension's page size and margin settings.
   - The `body` CSS rules (applying to everything in the file `resume.md`, unless a rule with stronger specificity is applied somewhere) define a `font-size` of `12px` and a `font-family` (the font itself) of `Roboto`.
 
 2. Now, when Markdown PDF Plus is used to export `resume.md` as a PDF, the result will be equivalent to the file `resume.pdf`, available in the location specified in step (1.).

@@ -10,6 +10,8 @@ module.exports = {
     sourceType: "module",
   },
   settings: {
+    // Provided by VS Code at runtime; only its types are installed.
+    "import/core-modules": ["vscode"],
     "import/resolver": {
       typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
     },
@@ -26,7 +28,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   rules: {
     "@typescript-eslint/explicit-function-return-type": [0],
-    quotes: [2, "double"],
+    quotes: [2, "double", { avoidEscape: true }],
     "import/namespace": 0,
     "import/no-named-as-default-member": 0,
     "import/order": [
